@@ -1,0 +1,7 @@
+{
+  "*.ts": [
+    "npm run lint",
+    "npm run format",
+    "npm test -- --bail --findRelatedTests"
+  ]
+}
