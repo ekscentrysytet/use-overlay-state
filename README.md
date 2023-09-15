@@ -17,6 +17,7 @@ If don't need async communication - it still exposes you open state management w
 **Simple example**:
 
 ```jsx
+import { useOverlayState } from 'use-overlay-state'
 import Popover from '@material-ui/core/Popover'
 
 const App = () => {
