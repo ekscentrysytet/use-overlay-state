@@ -1,14 +1,10 @@
 import { renderHook, act } from '@testing-library/react'
 import { useOverlayState } from './useOverlayState'
 
-const TestComponent = () => <div>Test</div>
-
 describe('useOverlayState', () => {
   test('changes "isOpen" & "params"', () => {
     const { result } = renderHook(() =>
-      useOverlayState<string, { firstName: string; lastName: string }>(() => (
-        <TestComponent />
-      )),
+      useOverlayState<string, { firstName: string; lastName: string }>(),
     )
 
     expect(result.current.isOpen).toBe(false)
@@ -33,9 +29,7 @@ describe('useOverlayState', () => {
   })
 
   test('resolves with value when using "resolve"', async () => {
-    const { result } = renderHook(() =>
-      useOverlayState<string, string>(() => <TestComponent />),
-    )
+    const { result } = renderHook(() => useOverlayState<string, string>())
 
     expect(result.current.isOpen).toBe(false)
 
@@ -54,9 +48,7 @@ describe('useOverlayState', () => {
   })
 
   test('resolves with null when using "close"', async () => {
-    const { result } = renderHook(() =>
-      useOverlayState<string, string>(() => <TestComponent />),
-    )
+    const { result } = renderHook(() => useOverlayState<string, string>())
 
     expect(result.current.isOpen).toBe(false)
 
@@ -75,9 +67,7 @@ describe('useOverlayState', () => {
   })
 
   test('respects "defaultIsOpen"', () => {
-    const { result } = renderHook(() =>
-      useOverlayState<string, string>(() => <TestComponent />, true),
-    )
+    const { result } = renderHook(() => useOverlayState<string, string>(true))
 
     expect(result.current.isOpen).toBe(true)
   })

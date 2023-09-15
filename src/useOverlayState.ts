@@ -1,35 +1,21 @@
-import {
-  useMemo,
-  useState,
-  useCallback,
-  useRef,
-  useEffect,
-  ReactNode,
-  DependencyList,
-} from 'react'
+import { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 
 type PromiseResolveCallback<T> = (value: T | PromiseLike<T> | null) => void
 
-interface RenderFnParams<T, P> {
+interface OverlayStateManagerProps<T, P> {
   isOpen: boolean
-  params: P | null
+  params?: P
+  open: (p?: P) => Promise<T | null>
   close: () => void
   resolve: (v: T) => void
-  updateParams: React.Dispatch<React.SetStateAction<P | null>>
-}
-
-type OverlayStateManagerProps<T, P> = RenderFnParams<T, P> & {
-  open: (p: P) => Promise<T | null>
-  overlayNode: ReactNode
+  updateParams: React.Dispatch<React.SetStateAction<P | undefined>>
 }
 
 export const useOverlayState = <T, P>(
-  renderFn: (args: RenderFnParams<T, P>) => ReactNode,
   defaultIsOpen: boolean = false,
-  deps: DependencyList = [],
 ): OverlayStateManagerProps<T, P> => {
   const [isOpen, setIsOpen] = useState(defaultIsOpen)
-  const [params, setParams] = useState<P | null>(null)
+  const [params, setParams] = useState<P>()
   const promiseRef = useRef<{
     resolve: PromiseResolveCallback<T>
   } | null>(null)
@@ -43,7 +29,7 @@ export const useOverlayState = <T, P>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const open = useCallback((p: P) => {
+  const open = useCallback((p?: P) => {
     setIsOpen(true)
     setParams(p)
 
@@ -76,19 +62,6 @@ export const useOverlayState = <T, P>(
     promiseRef.current = null
   }, [])
 
-  const overlayNode = useMemo(
-    () =>
-      renderFn({
-        isOpen,
-        params,
-        resolve,
-        close,
-        updateParams: setParams,
-      }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isOpen, params, resolve, close, ...deps],
-  )
-
   return useMemo(
     () => ({
       isOpen,
@@ -96,9 +69,8 @@ export const useOverlayState = <T, P>(
       open,
       resolve,
       close,
-      overlayNode,
       updateParams: setParams,
     }),
-    [isOpen, params, resolve, open, close, overlayNode],
+    [isOpen, params, resolve, open, close],
   )
 }
