@@ -64,3 +64,39 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+  release:
+    name: Release
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+
+      # cache node_modules to avoid unnecessary installs
+      - name: Cache node_modules
+        id: cache_node_modules
+        uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: node_modules-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        if: steps.cache_node_modules.outputs.cache-hit != 'true'
+        run: npm i
+        env:
+          HUSKY: 0
+
+      - name: Semantic Release
+        run: npx semantic-release
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GIT_AUTHOR_NAME: 'Nazar Ilkiv'
+          GIT_AUTHOR_EMAIL: ekscentrysytet@gmail.com
+          GIT_COMMITER_NAME: 'Nazar Ilkiv'
+          GIT_COMMITER_EMAIL: ekscentrysytet@gmail.com
