@@ -65,7 +65,7 @@ interface OverlayStateManagerProps<T, P> {
 **Returns object with following props:**
 
 - `isOpen: boolean` - open state indicator.
-- `params?: P | undefined` - params that has been passed when invoked `open`.
+- `params?: P` - params that has been passed when invoked `open`.
 - `open: (p?: P) => Promise<T | null>` - function that opens overlay. Returns a promise which resolves to either `null` if `close` was called or `result: T` if `resolve` was called
 - `close: () => void` - function that closes overlay. Will resolve returned promise from `open` with null (similar to `window.prompt`)
 - `resolve: (v: T) => void` - function that resolves returned promise from `open` with custom value.
