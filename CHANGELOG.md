@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/ekscentrysytet/use-overlay-state/compare/v1.0.0...v1.0.1) (2023-09-17)
+
+
+### Bug Fixes
+
+* add failure test & force bump patch version ([cde55a0](https://github.com/ekscentrysytet/use-overlay-state/commit/cde55a0e2bffadc717f4a6030de5909a3509cf46))
+
 ## 1.0.0 (2023-09-17)
 
 
