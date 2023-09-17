@@ -70,8 +70,6 @@ const UserUpdateModal: React.FC<{
       gender: user!.gender,
     })
 
-    setConfirmLoading(false)
-
     // call `resolve` with user: User here so it resolves Promise created by `open` in App.tsx
     onSubmit(result)
   }
