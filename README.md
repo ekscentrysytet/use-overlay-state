@@ -1,20 +1,94 @@
 # useOverlayState React hook
 
-## Motivation
-
-You usually have cases when you need to open overlay from a parent component, pass some init values and somehow to get notified about what happened in the modal.
-The inspiration came from native `window.prompt` which allows you to get user input result in code that invoked `window.prompt`. However `window.prompt` is a blocking call and does not have any customization to your UI, instead this hook utilizes promises and adds more abilities for great experience.
-
-If don't need async communication - it still exposes you open state management wih convenient methods.
-
 ## Features
 
 - Promise-based interface
 - Two-way communication: you can pass params into overlay and get resolved value
 
+## Motivation
+
+The inspiration came from native `window.prompt` which allows you to get user input result in code that invoked it. However `window.prompt` is a blocking call and does not have any customization to your UI, instead this hook utilizes promises and adds more abilities for great experience.
+If don't need async communication - it still exposes you convenient methods to control overlay UI open state.
+
 ## Usage
 
-**Simple example**:
+**Async communication (mostly applicable to modals/alerts)**:
+
+```tsx
+import { useOverlayState } from 'use-overlay-state'
+
+// App.tsx
+const App: React.FC = () => {
+  const { isOpen, params, open, close, resolve } = useOverlayState<
+    User,
+    { user: User }
+  >()
+
+  const handleEdit = async (user: User) => {
+    // user: User is passed to modal params
+    // `open` returns a Promise which resolves either with `null` if `close` was called
+    // or User if resolve was called
+    const updatedUser = await open({ user })
+
+    if (updatedUser != null) {
+      alert(`Updated user is ${updatedUser.firstName} ${updatedUser.lastName}`)
+    } else {
+      console.log('Modal was closed')
+    }
+  }
+
+  return (
+    <>
+      <UsersList onEdit={handleEdit} />
+      <UserUpdateModal
+        isOpen={isOpen}
+        user={params?.user}
+        onSubmit={resolve}
+        onClose={close}
+      />
+    </>
+  )
+}
+
+// UserUpdateModal.tsx
+import { Modal } from 'antd'
+import userService from 'services/user'
+
+const UserUpdateModal: React.FC<{
+  user?: User
+  isOpen: boolean
+  onSubmit: (u: User) => void
+  onClose: () => void
+}> = ({ user, isOpen, onSubmit, onClose }) => {
+  const handleSubmit = async () => {
+    const result = await usersService.update(user!.id, {
+      firstName: 'Updated',
+      lastName: 'User',
+      gender: user!.gender,
+    })
+
+    setConfirmLoading(false)
+
+    // call `resolve` with user: User here so it resolves Promise created by `open` in App.tsx
+    onSubmit(result)
+  }
+
+  return (
+    <Modal
+      title="Update User"
+      open={isOpen}
+      onOk={handleSubmit}
+      onCancel={onClose}
+    >
+      <p>
+        Are you sure you want to update {user?.firstName} {user?.lastName}
+      </p>
+    </Modal>
+  )
+}
+```
+
+**Simple example - controllable popover (no async communication)**:
 
 ```jsx
 import { useOverlayState } from 'use-overlay-state'
@@ -45,7 +119,7 @@ See more [examples](https://github.com/ekscentrysytet/use-overlay-state/tree/mai
 ## API
 
 ```ts
-useOverlayState = <T, P>(
+useOverlayState<T, P>(
   defaultIsOpen: boolean = false,
 ): OverlayStateManagerProps<T, P>
 
