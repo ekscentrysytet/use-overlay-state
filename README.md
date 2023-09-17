@@ -1,5 +1,8 @@
 # useOverlayState React hook
 
+![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/ekscentrysytet/use-overlay-state/publish.yml)
+![npm](https://img.shields.io/npm/v/use-overlay-state)
+
 ## Features
 
 - Promise-based interface
