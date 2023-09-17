@@ -71,4 +71,11 @@ describe('useOverlayState', () => {
 
     expect(result.current.isOpen).toBe(true)
   })
+
+  test('throws error when use "close" or "resolve" before "open"', () => {
+    const { result } = renderHook(() => useOverlayState())
+
+    expect(result.current.close).toThrowError()
+    expect(result.current.resolve).toThrowError()
+  })
 })
